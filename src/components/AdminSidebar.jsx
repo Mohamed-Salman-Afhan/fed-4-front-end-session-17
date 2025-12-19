@@ -46,8 +46,11 @@ export function AdminSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-3xl font-bold text-foreground">
-            <Link to="/">Aelora</Link>
+          <SidebarGroupLabel className="h-16 mb-4">
+            <Link to="/" className="flex items-center gap-2">
+                <img src="/logo.png" alt="Voltaris Solar" className="h-12 w-auto" />
+                <span className="text-xl font-bold text-primary">Voltaris</span>
+            </Link>
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="mt-4">

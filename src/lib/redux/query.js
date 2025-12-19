@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseUrl = "http://localhost:8000/api";
+const baseUrl = import.meta.env.VITE_API_BASE_URL + "/api" || "http://localhost:3000/api";
 
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
@@ -45,9 +45,12 @@ export const api = createApi({
     getAllUsers: build.query({
       query: () => `/users`,
     }),
+    getAnomalies: build.query({
+      query: () => `/anomalies`,
+    }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllUsersQuery, useGetEnergyGenerationRecordsBySolarUnitQuery, useGetSolarUnitForUserQuery, useGetSolarUnitsQuery, useGetSolarUnitByIdQuery, useCreateSolarUnitMutation, useEditSolarUnitMutation } = api;
+export const { useGetAllUsersQuery, useGetEnergyGenerationRecordsBySolarUnitQuery, useGetSolarUnitForUserQuery, useGetSolarUnitsQuery, useGetSolarUnitByIdQuery, useCreateSolarUnitMutation, useEditSolarUnitMutation, useGetAnomaliesQuery } = api;

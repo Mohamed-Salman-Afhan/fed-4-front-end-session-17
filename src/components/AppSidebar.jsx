@@ -22,14 +22,14 @@ const items = [
     icon: <LayoutDashboard className="w-8 h-8" size={32} />,
   },
   {
+    title: "Invoices",
+    url: "/dashboard/invoices",
+    icon: <ChartLine className="w-8 h-8" size={32} />, 
+  },
+  {
     title: "Anomalies",
     url: "/dashboard/anomalies",
     icon: <TriangleAlert className="w-8 h-8" size={32} />,
-  },
-  {
-    title: "Analytics",
-    url: "/dashboard/analytics",
-    icon: <ChartLine className="w-8 h-8" size={32} />,
   },
 ];
 
@@ -56,8 +56,11 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-3xl font-bold text-foreground">
-            <Link to="/">Aelora</Link>
+          <SidebarGroupLabel className="h-16 mb-4">
+            <Link to="/" className="flex items-center gap-2">
+                <img src="/logo.png" alt="Voltaris Solar" className="h-12 w-auto" />
+                <span className="text-xl font-bold text-primary">Voltaris</span>
+            </Link>
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="mt-4 text">

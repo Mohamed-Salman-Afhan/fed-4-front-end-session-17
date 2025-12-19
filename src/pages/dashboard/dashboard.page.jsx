@@ -1,31 +1,69 @@
 import { useGetSolarUnitForUserQuery } from "@/lib/redux/query";
-import DataChart from "./components/DataChart";
 import { useUser } from "@clerk/clerk-react";
+import WeatherCard from "./components/WeatherCard";
+import PowerCard from "./components/PowerCard";
+import EnergyRow from "./components/EnergyRow";
+import PowerChart from "./components/PowerChart";
+import { useEffect, useState } from "react";
 
 const DashboardPage = () => {
-  const { user, isLoaded } = useUser();
+  const { user } = useUser();
+  const { data: fetchedSolarUnit, isLoading, isError, error } = useGetSolarUnitForUserQuery();
+  const [solarUnit, setSolarUnit] = useState(null);
 
-  const { data: solarUnit, isLoading: isLoadingSolarUnit, isError: isErrorSolarUnit, error: errorSolarUnit } = useGetSolarUnitForUserQuery();
+  // Cache data to prevent UI flash on transient errors
+  useEffect(() => {
+    if (fetchedSolarUnit) {
+      setSolarUnit(fetchedSolarUnit);
+    }
+  }, [fetchedSolarUnit]);
+  
+  const [weather, setWeather] = useState(null);
 
-  if (isLoadingSolarUnit) {
-    return <div>Loading...</div>;
+  useEffect(() => {
+    const fetchWeather = async () => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/weather`);
+            if(res.ok) setWeather(await res.json());
+        } catch(e) { console.error(e); }
+    };
+    fetchWeather();
+  }, []);
+
+  if (isLoading && !solarUnit) return <div className="p-8">Loading dashboard...</div>;
+  
+  // Only show error if we have NO data at all
+  if (!solarUnit && isError) {
+      return (
+        <div className="p-8 text-red-500">
+            <h2 className="text-xl font-bold mb-2">Error Loading Dashboard</h2>
+            <p>{error?.data?.message || "Could not load solar unit."}</p>
+            <p className="text-sm mt-4 text-gray-500">Retrying connection...</p>
+        </div>
+      );
   }
-
-  if (isErrorSolarUnit) {
-    return <div>Error: {errorSolarUnit.message}</div>;
-  }
-
-  console.log(solarUnit);
 
   return (
-    <main className="mt-4">
-      <h1 className="text-4xl font-bold text-foreground">{user?.firstName}'s House</h1>
-      <p className="text-gray-600 mt-2">
-        Welcome back to your Solar Energy Production Dashboard
-      </p>
-      <div className="mt-8">
-        <DataChart solarUnitId={solarUnit._id} />
+    <main className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+            <h1 className="text-2xl font-bold text-foreground">{user?.firstName}'s Home</h1>
+            <p className="text-muted-foreground text-sm">Welcome back to your Solar Energy Dashboard</p>
+        </div>
+        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            Status: {solarUnit?.status || "Normal"}
+        </div>
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-auto lg:h-64">
+        <WeatherCard weather={weather} />
+        <PowerCard />
+      </div>
+
+      <EnergyRow />
+      
+      <PowerChart />
     </main>
   );
 };

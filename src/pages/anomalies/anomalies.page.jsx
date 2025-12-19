@@ -1,31 +1,27 @@
-import { useGetSolarUnitForUserQuery } from "@/lib/redux/query";
-import DataCard from "./components/DataCard";
-import { useUser } from "@clerk/clerk-react";
+import AnomalyStats from "./components/AnomalyStats";
+import AnomalyCharts from "./components/AnomalyCharts";
+import AnomalyList from "./components/AnomalyList";
+
+import { useGetAnomaliesQuery } from "@/lib/redux/query";
 
 const AnomaliesPage = () => {
-  const { user, isLoaded } = useUser();
+  const { data: anomalies, isLoading, isError } = useGetAnomaliesQuery();
 
-  const { data: solarUnit, isLoading: isLoadingSolarUnit, isError: isErrorSolarUnit, error: errorSolarUnit } = useGetSolarUnitForUserQuery();
-
-  if (isLoadingSolarUnit) {
-    return <div>Loading...</div>;
-  }
-
-  if (isErrorSolarUnit) {
-    return <div>Error: {errorSolarUnit.message}</div>;
-  }
-
-  console.log(solarUnit);
+  if (isLoading) return <div className="p-8">Loading anomalies...</div>;
+  if (isError) return <div className="p-8 text-red-500">Error loading anomalies.</div>;
 
   return (
-    <main className="mt-4">
-      <h1 className="text-4xl font-bold text-foreground">{user?.firstName}'s House</h1>
-      <p className="text-gray-600 mt-2">
-        Monitor anomalies in your solar unit
-      </p>
-      <div className="mt-8">
-        <DataCard solarUnitId={solarUnit._id} />
+    <main className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Anomaly Detection</h1>
+        <p className="text-muted-foreground text-sm">Monitor and investigate unusual patterns in wind turbine operations.</p>
       </div>
+
+      <AnomalyStats anomalies={anomalies} />
+
+      <AnomalyCharts anomalies={anomalies} />
+
+      <AnomalyList anomalies={anomalies} />
     </main>
   );
 };
